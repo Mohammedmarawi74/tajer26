@@ -17,9 +17,10 @@ interface Props {
   primaryColor: string;
   accentColor: string;
   textColor: string;
+  forExport?: boolean;
 }
 
-const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, textColor }) => {
+const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, textColor, forExport }) => {
   return (
     <div className="chart-container">
       <ResponsiveContainer width="100%" height="100%">
@@ -54,7 +55,7 @@ const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, text
             tickLine={false}
             axisLine={false}
             reversed
-            style={{ fontFamily: 'Cairo, Tajawal, Almarai, sans-serif' }}
+            style={{ fontFamily: 'IBM Plex Sans Arabic, sans-serif' }}
             dy={10}
           />
           
@@ -66,7 +67,7 @@ const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, text
             fontWeight={600}
             tickLine={false}
             axisLine={false}
-            style={{ fontFamily: 'Cairo, Tajawal, Almarai, sans-serif' }}
+            style={{ fontFamily: 'IBM Plex Sans Arabic, sans-serif' }}
             dx={-10}
             tickFormatter={(value) => `${value}`}
           />
@@ -80,7 +81,7 @@ const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, text
               borderRadius: '16px',
               color: textColor,
               textAlign: 'right',
-              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif',
+              fontFamily: 'IBM Plex Sans Arabic, sans-serif',
               fontSize: '14px',
               fontWeight: 600,
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
@@ -90,12 +91,12 @@ const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, text
               color: primaryColor,
               fontWeight: 700,
               marginBottom: '8px',
-              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif'
+              fontFamily: 'IBM Plex Sans Arabic, sans-serif'
             }}
             itemStyle={{
               color: textColor,
               fontWeight: 700,
-              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif'
+              fontFamily: 'IBM Plex Sans Arabic, sans-serif'
             }}
             cursor={{
               stroke: primaryColor,
@@ -113,7 +114,7 @@ const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, text
             strokeWidth={4}
             fillOpacity={1}
             fill="url(#colorValue)"
-            animationDuration={1800}
+            animationDuration={forExport ? 0 : 1800}
             activeDot={{
               r: 8,
               fill: primaryColor,

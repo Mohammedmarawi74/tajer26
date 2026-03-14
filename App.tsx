@@ -22,10 +22,19 @@ const App: React.FC = () => {
     setIsExporting(true);
     try {
       // Small delay to ensure any animations or state updates are settled
-      await new Promise(r => setTimeout(r, 100));
+      // Moderate delay to ensure everything is rendered
+      await new Promise(r => setTimeout(r, 500));
       const dataUrl = await htmlToImage.toPng(canvasRef.current, {
         quality: 1,
-        pixelRatio: 2, // High resolution
+        pixelRatio: 2,
+        width: 1080,
+        height: 1080,
+        backgroundColor: '#ffffff', // Ensure no transparency issues
+        style: {
+          opacity: '1',
+          visibility: 'visible',
+          transform: 'none',
+        },
       });
       const link = document.createElement('a');
       link.download = `al-tajer-slide-${state.currentSlideIndex + 1}.png`;
@@ -85,24 +94,14 @@ const App: React.FC = () => {
         {/* Canvas Container */}
         <div className="canvas-container">
           <div className="canvas-wrapper">
-            {/* The actual canvas element for export */}
+            {/* Only the preview slider here */}
             <div className="canvas-scaler">
               <SlideCanvas
-                id="export-canvas"
                 slide={state.slides[state.currentSlideIndex]}
                 theme={state.theme}
                 logo={state.logo}
                 customCss={state.customCss}
               />
-              {/* Invisible anchor for html-to-image to target precisely */}
-              <div ref={canvasRef} className="canvas-anchor">
-                 <SlideCanvas
-                    slide={state.slides[state.currentSlideIndex]}
-                    theme={state.theme}
-                    logo={state.logo}
-                    customCss={state.customCss}
-                  />
-              </div>
             </div>
 
             {/* Canvas Navigation Controls */}
@@ -159,6 +158,30 @@ const App: React.FC = () => {
           </button>
         </div>
       </main>
+
+      {/* Hidden container for export - placed outside main to avoid parent styles */}
+      <div 
+        ref={canvasRef} 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: '-3000px',
+          width: '1080px',
+          height: '1080px',
+          zIndex: -9999,
+          pointerEvents: 'none',
+          backgroundColor: '#ffffff',
+          overflow: 'hidden'
+        }}
+      >
+        <SlideCanvas
+          slide={state.slides[state.currentSlideIndex]}
+          theme={state.theme}
+          logo={state.logo}
+          customCss={state.customCss}
+          forExport={true}
+        />
+      </div>
     </div>
   );
 };

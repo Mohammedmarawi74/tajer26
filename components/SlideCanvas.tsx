@@ -9,13 +9,14 @@ interface Props {
   logo?: string;
   customCss?: string;
   id?: string;
+  forExport?: boolean;
 }
 
-const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => {
+const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forExport }) => {
   return (
     <div
       id={id}
-      className="slide-canvas"
+      className={`slide-canvas ${forExport ? 'slide-canvas--export' : ''}`}
       style={{
         background: theme.background,
         color: theme.textColor,
@@ -198,6 +199,7 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => 
               primaryColor={theme.primary}
               accentColor={theme.accent}
               textColor={theme.textColor}
+              forExport={forExport}
             />
           </div>
         )}
@@ -256,7 +258,7 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => 
             fontWeight: '800'
           }}
         >
-          Al-Tajer Digital
+          dtajer.com 
         </div>
       </div>
     </div>
