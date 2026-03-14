@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Layout,
@@ -10,7 +9,9 @@ import {
   BarChart3,
   Upload,
   Layers,
-  Image
+  Image,
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { AppState, SlideType, Slide, PREDEFINED_LOGOS } from '../types';
 import { THEMES } from '../constants';
@@ -37,8 +38,8 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
       title: 'عنوان جديد',
       subtitle: 'وصف فرعي هنا'
     };
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       slides: [...prev.slides, newSlide],
       currentSlideIndex: prev.slides.length
     }));
@@ -47,8 +48,8 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
   const removeSlide = () => {
     if (state.slides.length <= 1) return;
     const newSlides = state.slides.filter((_, i) => i !== state.currentSlideIndex);
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       slides: newSlides,
       currentSlideIndex: Math.max(0, prev.currentSlideIndex - 1)
     }));
@@ -84,21 +85,21 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
           onClick={() => setActiveTab('content')}
           className={`sidebar__tab ${activeTab === 'content' ? 'sidebar__tab--content' : 'sidebar__tab--inactive'}`}
         >
-          <Layout size={20} />
+          <Layout size={20} strokeWidth={2} />
           <span className="sidebar__tab-label">المحتوى</span>
         </button>
         <button
           onClick={() => setActiveTab('styles')}
           className={`sidebar__tab ${activeTab === 'styles' ? 'sidebar__tab--styles' : 'sidebar__tab--inactive'}`}
         >
-          <Palette size={20} />
+          <Palette size={20} strokeWidth={2} />
           <span className="sidebar__tab-label">التنسيق</span>
         </button>
         <button
           onClick={() => setActiveTab('css')}
           className={`sidebar__tab ${activeTab === 'css' ? 'sidebar__tab--css' : 'sidebar__tab--inactive'}`}
         >
-          <Code size={20} />
+          <Code size={20} strokeWidth={2} />
           <span className="sidebar__tab-label">CSS</span>
         </button>
       </div>
@@ -108,7 +109,10 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
         {activeTab === 'content' && (
           <>
             <div className="sidebar__section">
-              <label className="sidebar__label">نوع الشريحة</label>
+              <label className="sidebar__label">
+                <Type size={16} style={{ marginLeft: '8px' }} />
+                نوع الشريحة
+              </label>
               <div className="sidebar__grid">
                 {Object.values(SlideType).map(type => (
                   <button
@@ -116,6 +120,10 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                     onClick={() => updateSlide({ type })}
                     className={`sidebar__type-btn ${currentSlide.type === type ? 'sidebar__type-btn--active' : 'sidebar__type-btn--inactive'}`}
                   >
+                    {type === SlideType.INTRO && <Sparkles size={14} style={{ marginLeft: '6px' }} />}
+                    {type === SlideType.CHART && <BarChart3 size={14} style={{ marginLeft: '6px' }} />}
+                    {type === SlideType.STEPS && <Layout size={14} style={{ marginLeft: '6px' }} />}
+                    {type === SlideType.PRICING && <Layers size={14} style={{ marginLeft: '6px' }} />}
                     {type}
                   </button>
                 ))}
@@ -130,6 +138,7 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                   onChange={(e) => updateSlide({ title: e.target.value })}
                   className="sidebar__textarea"
                   rows={3}
+                  placeholder="أدخل العنوان الرئيسي هنا..."
                 />
               </div>
               <div>
@@ -139,6 +148,7 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                   value={currentSlide.subtitle}
                   onChange={(e) => updateSlide({ subtitle: e.target.value })}
                   className="sidebar__input"
+                  placeholder="أدخل العنوان الفرعي هنا..."
                 />
               </div>
 
@@ -146,17 +156,31 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                 <div>
                   <label className="sidebar__label">الوصف</label>
                   <textarea
-                    value={currentSlide.description}
+                    value={currentSlide.description || ''}
                     onChange={(e) => updateSlide({ description: e.target.value })}
                     className="sidebar__textarea"
                     rows={4}
+                    placeholder="أدخل وصف الشريحة هنا..."
+                  />
+                </div>
+              )}
+
+              {currentSlide.type === SlideType.INTRO && (
+                <div>
+                  <label className="sidebar__label">نص الزر</label>
+                  <input
+                    type="text"
+                    value={currentSlide.buttonText || ''}
+                    onChange={(e) => updateSlide({ buttonText: e.target.value })}
+                    className="sidebar__input"
+                    placeholder="مثال: ابدأ الآن"
                   />
                 </div>
               )}
 
               <div>
                 <label className="sidebar__label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Upload size={14} />
+                  <Upload size={16} />
                   صورة الخلفية
                 </label>
                 <input
@@ -173,14 +197,15 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                 onClick={addSlide}
                 className="sidebar__add-btn"
               >
-                <Plus size={16} />
+                <Plus size={18} strokeWidth={2.5} />
                 إضافة شريحة
               </button>
               <button
                 onClick={removeSlide}
                 className="sidebar__remove-btn"
+                title="حذف الشريحة"
               >
-                <Trash2 size={16} />
+                <Trash2 size={18} strokeWidth={2} />
               </button>
             </div>
           </>
@@ -189,20 +214,50 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
         {activeTab === 'styles' && (
           <div className="sidebar__section">
             <div className="sidebar__section">
-              <label className="sidebar__label">سمات التصميم</label>
+              <label className="sidebar__label">
+                <Palette size={16} style={{ marginLeft: '8px' }} />
+                سمات التصميم
+              </label>
               <div className="sidebar__theme-grid">
                 {THEMES.map(theme => (
                   <button
                     key={theme.id}
                     onClick={() => setState(prev => ({ ...prev, theme }))}
                     className={`sidebar__theme-btn ${state.theme.id === theme.id ? 'sidebar__theme-btn--active' : ''}`}
-                    style={{ background: theme.background }}
+                    style={{ 
+                      background: theme.background,
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}
                   >
-                    <span className="sidebar__theme-name" style={{ color: theme.textColor }}>{theme.name}</span>
+                    <span 
+                      className="sidebar__theme-name" 
+                      style={{ 
+                        color: theme.textColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      {state.theme.id === theme.id && <Check size={16} color="#2563EB" />}
+                      {theme.name}
+                    </span>
                     <div className="sidebar__theme-colors">
-                      <div className="sidebar__theme-color" style={{ backgroundColor: theme.primary }} />
-                      <div className="sidebar__theme-color" style={{ backgroundColor: theme.accent }} />
-                      <div className="sidebar__theme-color" style={{ backgroundColor: theme.secondary }} />
+                      <div 
+                        className="sidebar__theme-color" 
+                        style={{ backgroundColor: theme.primary }}
+                        title="اللون الأساسي"
+                      />
+                      <div 
+                        className="sidebar__theme-color" 
+                        style={{ backgroundColor: theme.accent }}
+                        title="لون التمييز"
+                      />
+                      <div 
+                        className="sidebar__theme-color" 
+                        style={{ backgroundColor: theme.secondary }}
+                        title="اللون الثانوي"
+                      />
                     </div>
                   </button>
                 ))}
@@ -211,10 +266,10 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
 
             <div className="sidebar__logo-section">
               <label className="sidebar__logo-label">
-                <Layers size={14} />
+                <Layers size={16} />
                 شعار المنصة (Logo)
               </label>
-              
+
               {/* Predefined Logos */}
               <div className="sidebar__logo-grid">
                 {PREDEFINED_LOGOS.map(logo => (
@@ -225,6 +280,23 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                   >
                     <img src={logo.src} alt={logo.name} className="sidebar__logo-option-img" />
                     <span className="sidebar__logo-option-name">{logo.name}</span>
+                    {state.logo === logo.src && (
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          top: '4px',
+                          right: '4px',
+                          background: '#2563EB',
+                          borderRadius: '50%',
+                          padding: '2px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Check size={10} color="#FFFFFF" />
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -236,7 +308,7 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
 
               {/* Custom Upload */}
               <label className="sidebar__label" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Upload size={14} />
+                <Upload size={16} />
                 رفع شعار مخصص
               </label>
               <input
@@ -251,9 +323,9 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
                 <button
                   onClick={() => setState(prev => ({ ...prev, logo: undefined }))}
                   className="sidebar__logo-remove-btn"
-                  style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                   إزالة الشعار تماماً
                 </button>
               )}
@@ -264,7 +336,7 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
         {activeTab === 'css' && (
           <div className="sidebar__css-section">
             <label className="sidebar__css-label">
-              <Code size={14} />
+              <Code size={16} />
               تخصيص CSS
             </label>
             <p className="sidebar__css-hint">أضف أنماطك الخاصة هنا للتحكم الكامل في التصميم.</p>

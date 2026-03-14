@@ -1,12 +1,11 @@
-
 import React from 'react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   AreaChart,
   Area
@@ -15,54 +14,113 @@ import { ChartDataPoint } from '../types';
 
 interface Props {
   data: ChartDataPoint[];
-  color: string;
+  primaryColor: string;
+  accentColor: string;
+  textColor: string;
 }
 
-const ChartComponent: React.FC<Props> = ({ data, color }) => {
+const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, textColor }) => {
   return (
     <div className="chart-container">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 10 }}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={color} stopOpacity={0.3}/>
-              <stop offset="95%" stopColor={color} stopOpacity={0}/>
+              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.4}/>
+              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.05}/>
+            </linearGradient>
+            <linearGradient id="gradientAccent" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={primaryColor} stopOpacity={1}/>
+              <stop offset="100%" stopColor={accentColor} stopOpacity={0.8}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a" />
+          
+          {/* Subtle grid lines */}
+          <CartesianGrid 
+            strokeDasharray="4 4" 
+            vertical={false} 
+            stroke={textColor}
+            strokeOpacity={0.1}
+            strokeWidth={1}
+          />
+          
+          {/* X Axis */}
           <XAxis
             dataKey="label"
-            stroke="#71717a"
-            fontSize={12}
+            stroke={textColor}
+            strokeOpacity={0.6}
+            fontSize={14}
+            fontWeight={600}
             tickLine={false}
             axisLine={false}
             reversed
-            style={{ fontFamily: 'IBM Plex Sans Arabic' }}
+            style={{ fontFamily: 'Cairo, Tajawal, Almarai, sans-serif' }}
+            dy={10}
           />
+          
+          {/* Y Axis */}
           <YAxis
-            stroke="#71717a"
-            fontSize={12}
+            stroke={textColor}
+            strokeOpacity={0.6}
+            fontSize={14}
+            fontWeight={600}
             tickLine={false}
             axisLine={false}
-            style={{ fontFamily: 'IBM Plex Sans Arabic' }}
+            style={{ fontFamily: 'Cairo, Tajawal, Almarai, sans-serif' }}
+            dx={-10}
+            tickFormatter={(value) => `${value}`}
           />
+          
+          {/* Custom Tooltip */}
           <Tooltip
             contentStyle={{
-              backgroundColor: '#18181b',
-              borderColor: '#3f3f46',
-              color: '#fff',
+              backgroundColor: 'rgba(255, 255, 255, 0.98)',
+              borderColor: primaryColor,
+              borderWidth: 2,
+              borderRadius: '16px',
+              color: textColor,
               textAlign: 'right',
-              fontFamily: 'IBM Plex Sans Arabic'
+              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif',
+              fontSize: '14px',
+              fontWeight: 600,
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+              padding: '12px 20px'
+            }}
+            labelStyle={{
+              color: primaryColor,
+              fontWeight: 700,
+              marginBottom: '8px',
+              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif'
+            }}
+            itemStyle={{
+              color: textColor,
+              fontWeight: 700,
+              fontFamily: 'Cairo, Tajawal, Almarai, sans-serif'
+            }}
+            cursor={{
+              stroke: primaryColor,
+              strokeWidth: 2,
+              strokeDasharray: '4 4',
+              opacity: 0.5
             }}
           />
+          
+          {/* Area with gradient stroke */}
           <Area
             type="monotone"
             dataKey="value"
-            stroke={color}
-            strokeWidth={3}
+            stroke="url(#gradientAccent)"
+            strokeWidth={4}
             fillOpacity={1}
             fill="url(#colorValue)"
-            animationDuration={1500}
+            animationDuration={1800}
+            activeDot={{
+              r: 8,
+              fill: primaryColor,
+              stroke: '#FFFFFF',
+              strokeWidth: 3,
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }}
           />
         </AreaChart>
       </ResponsiveContainer>

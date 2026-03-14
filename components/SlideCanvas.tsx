@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Slide, SlideType, AppTheme } from '../types';
 import ChartComponent from './ChartComponent';
-import { TrendingUp, CheckCircle, ArrowLeft } from 'lucide-react';
+import { TrendingUp, CheckCircle, ArrowLeft, Sparkles } from 'lucide-react';
 
 interface Props {
   slide: Slide;
@@ -18,22 +17,100 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => 
       id={id}
       className="slide-canvas"
       style={{
-        backgroundColor: theme.background,
+        background: theme.background,
         color: theme.textColor,
-        backgroundImage: slide.image ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${slide.image})` : 'none',
+        backgroundImage: slide.image ? `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.9)), url(${slide.image})` : theme.background,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
     >
       <style>{customCss}</style>
 
-      {/* Background Decor */}
+      {/* Background Decor - Top Accent Bar */}
       <div
         className="slide-canvas__bg-decor"
-        style={{ backgroundColor: theme.primary }}
+        style={{ 
+          background: `linear-gradient(90deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
+          boxShadow: `0 4px 12px ${theme.primary}40`
+        }}
       />
+      
+      {/* Subtle Background Pattern - Bokeh Effect */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: '15%',
+          left: '8%',
+          width: '280px',
+          height: '280px',
+          background: `radial-gradient(circle, ${theme.primary}1A 0%, transparent 70%)`,
+          borderRadius: '50%',
+          filter: 'blur(50px)',
+          zIndex: 0,
+          opacity: 0.7
+        }}
+      />
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '20%',
+          right: '8%',
+          width: '320px',
+          height: '320px',
+          background: `radial-gradient(circle, ${theme.primary}1F 0%, transparent 70%)`,
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          zIndex: 0,
+          opacity: 0.65
+        }}
+      />
+      <div 
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '400px',
+          height: '400px',
+          background: `radial-gradient(circle, ${theme.primary}14 0%, transparent 75%)`,
+          borderRadius: '50%',
+          filter: 'blur(70px)',
+          zIndex: 0,
+          opacity: 0.55
+        }}
+      />
+      <div 
+        style={{
+          position: 'absolute',
+          top: '25%',
+          right: '15%',
+          width: '180px',
+          height: '180px',
+          background: `radial-gradient(circle, ${theme.primary}1A 0%, transparent 70%)`,
+          borderRadius: '50%',
+          filter: 'blur(45px)',
+          zIndex: 0,
+          opacity: 0.65
+        }}
+      />
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '35%',
+          left: '12%',
+          width: '220px',
+          height: '220px',
+          background: `radial-gradient(circle, ${theme.primary}17 0%, transparent 70%)`,
+          borderRadius: '50%',
+          filter: 'blur(55px)',
+          zIndex: 0,
+          opacity: 0.6
+        }}
+      />
+
+      {/* Decorative Icon */}
       <div className="slide-canvas__bg-icon">
-        <TrendingUp size={120} color={theme.primary} />
+        <TrendingUp size={140} color={theme.primary} strokeWidth={1} />
       </div>
 
       {/* Header / Logo */}
@@ -43,61 +120,107 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => 
         ) : (
           <div
             className="slide-canvas__logo"
-            style={{ backgroundColor: theme.primary }}
+            style={{ 
+              background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
+              color: '#FFFFFF'
+            }}
           >
-            R
+            <Sparkles size={22} />
           </div>
         )}
-        <span className="slide-canvas__brand" style={{ color: theme.textColor }}>
-          RADAR AL-MUSTATHMIR
+        <span 
+          className="slide-canvas__brand" 
+          style={{ color: theme.textColor }}
+        >
+          منصة التاجر
         </span>
       </div>
 
       {/* Slide Content */}
       <div className="slide-canvas__content">
+        {/* Title with gradient text effect */}
         <h1
           className="slide-canvas__title"
-          style={{ color: theme.textColor }}
+          style={{ 
+            color: theme.textColor,
+            background: `linear-gradient(135deg, ${theme.textColor} 0%, ${theme.primary} 100%)`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
         >
           {slide.title}
         </h1>
 
+        {/* Subtitle */}
         <p
           className="slide-canvas__subtitle"
-          style={{ color: theme.accent }}
+          style={{ 
+            color: theme.primary,
+            background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
         >
           {slide.subtitle}
         </p>
 
+        {/* Intro Slide Content */}
         {slide.type === SlideType.INTRO && slide.description && (
           <div className="slide-canvas__description">
-            <p className="slide-canvas__description-text">
+            <p 
+              className="slide-canvas__description-text"
+              style={{ color: theme.textColor }}
+            >
               {slide.description}
             </p>
             {slide.buttonText && (
-              <div
+              <button
                 className="slide-canvas__button"
-                style={{ backgroundColor: theme.primary, color: '#000' }}
+                style={{ 
+                  background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
+                  color: '#FFFFFF'
+                }}
               >
                 {slide.buttonText}
-                <ArrowLeft size={28} />
-              </div>
+                <ArrowLeft size={26} strokeWidth={2.5} />
+              </button>
             )}
           </div>
         )}
 
+        {/* Chart Slide Content */}
         {slide.type === SlideType.CHART && slide.chartData && (
           <div className="slide-canvas__chart">
-            <ChartComponent data={slide.chartData} color={theme.primary} />
+            <ChartComponent 
+              data={slide.chartData} 
+              primaryColor={theme.primary}
+              accentColor={theme.accent}
+              textColor={theme.textColor}
+            />
           </div>
         )}
 
+        {/* Steps Slide Content */}
         {slide.type === SlideType.STEPS && slide.points && (
           <div className="slide-canvas__steps">
             {slide.points.map((point, idx) => (
-              <div key={idx} className="slide-canvas__step">
+              <div 
+                key={idx} 
+                className="slide-canvas__step"
+                style={{
+                  borderRight: `4px solid ${theme.primary}`,
+                }}
+              >
                 <span className="slide-canvas__step-text">{point}</span>
-                <CheckCircle size={40} color={theme.primary} className="slide-canvas__step-icon" />
+                <CheckCircle 
+                  size={36} 
+                  color={theme.primary} 
+                  strokeWidth={2.5}
+                  className="slide-canvas__step-icon"
+                  fill={`${theme.primary}15`}
+                />
               </div>
             ))}
           </div>
@@ -105,24 +228,35 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id }) => 
       </div>
 
       {/* Footer */}
-      <div 
+      <div
         className="slide-canvas__footer"
-        style={{ 
-          backgroundColor: theme.footerBg || 'rgba(0, 0, 0, 0.3)',
-          borderColor: `rgba(255, 255, 255, 0.1)`
+        style={{
+          background: theme.footerBg || 'rgba(255, 255, 255, 0.9)',
+          border: `1px solid ${theme.primary}20`,
+          boxShadow: `0 4px 16px ${theme.primary}10`
         }}
       >
-        <div 
+        <div
           className="slide-canvas__footer-right"
-          style={{ color: theme.footerTextRight || '#ffffff' }}
+          style={{ color: theme.footerTextRight || theme.textColor }}
         >
-          منصة المستثمر
+          <Sparkles size={18} style={{ verticalAlign: 'middle', marginLeft: '8px' }} />
+          منصة التاجر الرقمية
         </div>
-        <div 
+        <div
           className="slide-canvas__footer-left"
-          style={{ color: theme.footerTextLeft || '#10b981' }}
+          style={{ 
+            color: theme.footerTextLeft || theme.primary,
+            background: `linear-gradient(90deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            fontWeight: '800'
+          }}
         >
-          al_investor.com
+          Al-Tajer Digital
         </div>
       </div>
     </div>

@@ -1,12 +1,10 @@
-
 import React, { useState, useRef } from 'react';
 import * as htmlToImage from 'html-to-image';
 import { AppState, SlideType } from './types';
 import { INITIAL_SLIDES, THEMES } from './constants';
 import Sidebar from './components/Sidebar';
 import SlideCanvas from './components/SlideCanvas';
-// Added BarChart3 to the imports from lucide-react
-import { Download, ChevronRight, ChevronLeft, Image as ImageIcon, Sparkles, BarChart3 } from 'lucide-react';
+import { Download, ChevronRight, ChevronLeft, Image as ImageIcon, Sparkles, BarChart3, Plus, Layout } from 'lucide-react';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -30,7 +28,7 @@ const App: React.FC = () => {
         pixelRatio: 2, // High resolution
       });
       const link = document.createElement('a');
-      link.download = `radar-investor-slide-${state.currentSlideIndex + 1}.png`;
+      link.download = `al-tajer-slide-${state.currentSlideIndex + 1}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -63,11 +61,11 @@ const App: React.FC = () => {
         <header className="header">
           <div className="header__brand">
             <div className="header__logo">
-               <Sparkles size={20} className="header__logo-icon" />
+               <Sparkles size={20} className="header__logo-icon" strokeWidth={2.5} />
             </div>
             <h1 className="header__title">رادار المصمم</h1>
             <div className="header__divider" />
-            <span className="header__subtitle">رؤية 2030</span>
+            <span className="header__subtitle">منصة التاجر الرقمية</span>
           </div>
 
           <button
@@ -77,7 +75,7 @@ const App: React.FC = () => {
           >
             {isExporting ? 'جاري التصدير...' : (
               <>
-                <Download size={18} />
+                <Download size={18} strokeWidth={2} />
                 تصدير الصورة
               </>
             )}
@@ -112,15 +110,17 @@ const App: React.FC = () => {
               onClick={prevSlide}
               disabled={state.currentSlideIndex === 0}
               className={`canvas-nav canvas-nav--prev`}
+              title="الشريحة السابقة"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={24} strokeWidth={2.5} />
             </button>
             <button
               onClick={nextSlide}
               disabled={state.currentSlideIndex === state.slides.length - 1}
               className={`canvas-nav canvas-nav--next`}
+              title="الشريحة التالية"
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={24} strokeWidth={2.5} />
             </button>
           </div>
         </div>
@@ -136,20 +136,26 @@ const App: React.FC = () => {
             >
               <div className="pager__slide-content">
                 <span className="pager__slide-title">{slide.title}</span>
-                {slide.type === SlideType.CHART ? <BarChart3 size={12} className="pager__slide-icon" /> : <ImageIcon size={12} className="pager__slide-icon" />}
+                {slide.type === SlideType.CHART ? (
+                  <BarChart3 size={14} className="pager__slide-icon" strokeWidth={2} />
+                ) : slide.type === SlideType.STEPS ? (
+                  <Layout size={14} className="pager__slide-icon" strokeWidth={2} />
+                ) : (
+                  <ImageIcon size={14} className="pager__slide-icon" strokeWidth={2} />
+                )}
               </div>
               <div className="pager__slide-number">{idx + 1}</div>
             </button>
           ))}
           <button
             onClick={() => {
-              const newSlide = { id: Math.random().toString(), type: SlideType.INTRO, title: 'عنوان جديد', subtitle: 'وصف فرعي' };
+              const newSlide = { id: Math.random().toString(36).substr(2, 9), type: SlideType.INTRO, title: 'عنوان جديد', subtitle: 'وصف فرعي' };
               setState(prev => ({ ...prev, slides: [...prev.slides, newSlide], currentSlideIndex: prev.slides.length }));
             }}
             className="pager__add-btn"
           >
-            <Sparkles size={16} />
-            <span className="pager__add-btn-label">جديد</span>
+            <Plus size={20} strokeWidth={2.5} />
+            <span className="pager__add-btn-label">شريحة جديدة</span>
           </button>
         </div>
       </main>
