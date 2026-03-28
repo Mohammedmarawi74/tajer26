@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import * as htmlToImage from 'html-to-image';
-import { AppState, SlideType } from './types';
-import { INITIAL_SLIDES, THEMES } from './constants';
+import { AppState, SlideType, AspectRatioType, FrameType } from './types';
+import { INITIAL_SLIDES, THEMES, SOCIAL_MEDIA_SIZES } from './constants';
 import Sidebar from './components/Sidebar';
 import SlideCanvas from './components/SlideCanvas';
 import { Download, ChevronRight, ChevronLeft, Image as ImageIcon, Sparkles, BarChart3, Plus, Layout } from 'lucide-react';
@@ -12,6 +12,8 @@ const App: React.FC = () => {
     currentSlideIndex: 0,
     theme: THEMES[0],
     customCss: '',
+    aspectRatio: AspectRatioType.SQUARE,
+    frameType: FrameType.NONE,
   });
 
   const [isExporting, setIsExporting] = useState(false);
@@ -20,28 +22,81 @@ const App: React.FC = () => {
   const handleExport = async () => {
     if (!canvasRef.current) return;
     setIsExporting(true);
+
     try {
-      // Small delay to ensure any animations or state updates are settled
-      // Moderate delay to ensure everything is rendered
-      await new Promise(r => setTimeout(r, 500));
-      const dataUrl = await htmlToImage.toPng(canvasRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        width: 1080,
-        height: 1080,
-        backgroundColor: '#ffffff', // Ensure no transparency issues
-        style: {
-          opacity: '1',
-          visibility: 'visible',
-          transform: 'none',
-        },
+      // 1. Ensure all fonts are loaded
+      await document.fonts.ready;
+
+      // 2. Wait for all images to load
+      const images = Array.from(document.querySelectorAll('img'));
+      await Promise.all([
+        ...images.map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve, reject) => {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', reject, { once: true });
+          });
+        }),
+        new Promise(resolve => setTimeout(resolve, 1000))
+      ]);
+
+      // 3. Force reflow on the export container
+      const exportContainer = canvasRef.current;
+      exportContainer.style.display = 'block';
+      exportContainer.style.visibility = 'visible';
+      
+      // Force reflow
+      void exportContainer.offsetHeight;
+
+      // 4. Additional delay for SVG charts and background patterns
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      const filter = (node: HTMLElement) => {
+        const exclusionClasses = ['canvas-nav', 'pager__add-btn', 'canvas-nav--prev', 'canvas-nav--next'];
+        return !exclusionClasses.some(cls => node.classList && node.classList.contains(cls));
+      };
+
+      const dimensions = SOCIAL_MEDIA_SIZES[state.aspectRatio];
+
+      // 5. Export options optimized for html-to-image
+      const options = {
+        quality: 1.0,
+        pixelRatio: 2, // 2 is usually enough and more stable than 3
+        width: dimensions.width,
+        height: dimensions.height,
+        backgroundColor: state.theme.background.includes('gradient') ? '#ffffff' : state.theme.background,
+        cacheBust: true,
+        filter: filter,
+        skipFonts: false,
+      };
+
+      // 6. Debug logging
+      console.log('Export starting with:', {
+        dimensions,
+        aspectRatio: state.aspectRatio
       });
+
+      // 7. Capture as PNG
+      const dataUrl = await htmlToImage.toPng(exportContainer, options);
+      
+      if (!dataUrl || dataUrl === 'data:,') {
+        throw new Error('Failed to create image - empty data URL');
+      }
+
+      // 8. Download the image
       const link = document.createElement('a');
-      link.download = `al-tajer-slide-${state.currentSlideIndex + 1}.png`;
+      link.download = `al-tajer-${state.aspectRatio.toLowerCase()}-${Date.now()}.png`;
       link.href = dataUrl;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+
+      // 9. Cleanup
+      exportContainer.style.display = 'none';
+
     } catch (err) {
       console.error('Error exporting image:', err);
+      alert('فشل تصدير الصورة. جرب مرة أخرى أو تأكد من استقرار المتصفح.');
     } finally {
       setIsExporting(false);
     }
@@ -101,6 +156,8 @@ const App: React.FC = () => {
                 theme={state.theme}
                 logo={state.logo}
                 customCss={state.customCss}
+                aspectRatio={state.aspectRatio}
+                frameType={state.frameType}
               />
             </div>
 
@@ -160,19 +217,21 @@ const App: React.FC = () => {
       </main>
 
       {/* Hidden container for export - placed outside main to avoid parent styles */}
-      <div 
-        ref={canvasRef} 
+      <div
+        ref={canvasRef}
         style={{
           position: 'fixed',
-          top: 0,
-          left: '-3000px',
-          width: '1080px',
-          height: '1080px',
-          zIndex: -9999,
+          top: '0',
+          left: '0',
+          width: `${SOCIAL_MEDIA_SIZES[state.aspectRatio].width}px`,
+          height: `${SOCIAL_MEDIA_SIZES[state.aspectRatio].height}px`,
+          zIndex: -100,
           pointerEvents: 'none',
           backgroundColor: '#ffffff',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          display: 'none', // Will be toggled to 'block' during export
         }}
+        aria-hidden="true"
       >
         <SlideCanvas
           slide={state.slides[state.currentSlideIndex]}

@@ -54,6 +54,12 @@ export const AL_TAJER_DEFAULT_THEME: AppTheme = {
   footerTextLeft: '#2563EB'
 };
 
+export const SOCIAL_MEDIA_SIZES = {
+  SQUARE: { width: 1080, height: 1080, label: 'مربع (1:1)' },
+  PORTRAIT: { width: 1080, height: 1350, label: 'بورتريه (4:5)' },
+  STORY: { width: 1080, height: 1920, label: 'ستوري (9:16)' }
+};
+
 export const THEMES: AppTheme[] = [
   {
     id: 'al-tajer-default',

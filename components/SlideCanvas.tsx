@@ -1,5 +1,5 @@
 import React from 'react';
-import { Slide, SlideType, AppTheme } from '../types';
+import { Slide, SlideType, AppTheme, AspectRatioType, FrameType } from '../types';
 import ChartComponent from './ChartComponent';
 import { TrendingUp, CheckCircle, ArrowLeft, Sparkles } from 'lucide-react';
 
@@ -10,24 +10,46 @@ interface Props {
   customCss?: string;
   id?: string;
   forExport?: boolean;
+  aspectRatio?: AspectRatioType;
+  frameType?: FrameType;
 }
 
-const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forExport }) => {
+const SlideCanvas: React.FC<Props> = ({ 
+  slide, 
+  theme, 
+  logo, 
+  customCss, 
+  id, 
+  forExport,
+  aspectRatio = AspectRatioType.SQUARE,
+  frameType = FrameType.NONE
+}) => {
+  const isFrameActive = frameType !== FrameType.NONE;
+
   return (
     <div
       id={id}
-      className={`slide-canvas ${forExport ? 'slide-canvas--export' : ''}`}
+      className={`slide-canvas slide-canvas--${aspectRatio.toLowerCase()} ${forExport ? 'slide-canvas--export' : ''} ${isFrameActive ? `slide-canvas--has-frame slide-canvas--frame-${frameType.toLowerCase()}` : ''}`}
       style={{
-        background: theme.background,
-        color: theme.textColor,
-        backgroundImage: slide.image ? `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.9)), url(${slide.image})` : theme.background,
+        background: slide.image ? `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.9)), url(${slide.image})` : theme.background,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        color: theme.textColor,
       }}
     >
       <style>{customCss}</style>
 
-      {/* Background Decor - Top Accent Bar */}
+      {/* Frame Components */}
+      {isFrameActive && (
+        <>
+          <div className="slide-canvas__frame-outer" style={{ borderColor: theme.primary }} />
+          <div className="slide-canvas__frame-inner" />
+        </>
+      )}
+
+      {/* Main Content Wrapper (shifted for frame if needed) */}
+      <div className="slide-canvas__main-wrapper">
+        {/* Background Decor - Top Accent Bar */}
       <div
         className="slide-canvas__bg-decor"
         style={{ 
@@ -117,7 +139,7 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forEx
       {/* Header / Logo */}
       <div className="slide-canvas__header">
         {logo ? (
-          <img src={logo} alt="Logo" className="slide-canvas__logo-img" />
+          <img src={logo} alt="Logo" className="slide-canvas__logo-img" crossOrigin="anonymous" />
         ) : (
           <div
             className="slide-canvas__logo"
@@ -144,10 +166,12 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forEx
           className="slide-canvas__title"
           style={{ 
             color: theme.textColor,
-            background: `linear-gradient(135deg, ${theme.textColor} 0%, ${theme.primary} 100%)`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            background: forExport ? 'none' : `linear-gradient(135deg, ${theme.textColor} 0%, ${theme.primary} 100%)`,
+            WebkitBackgroundClip: forExport ? 'none' : 'text',
+            WebkitTextFillColor: forExport ? theme.textColor : 'transparent',
+            backgroundClip: forExport ? 'none' : 'text',
+            // If for export, ensure we use a solid color to avoid black text issues in some browsers
+            ...(forExport ? { color: theme.textColor, WebkitTextFillColor: theme.textColor } : {})
           }}
         >
           {slide.title}
@@ -158,10 +182,11 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forEx
           className="slide-canvas__subtitle"
           style={{ 
             color: theme.primary,
-            background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            background: forExport ? 'none' : `linear-gradient(135deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
+            WebkitBackgroundClip: forExport ? 'none' : 'text',
+            WebkitTextFillColor: forExport ? theme.primary : 'transparent',
+            backgroundClip: forExport ? 'none' : 'text',
+            ...(forExport ? { color: theme.primary, WebkitTextFillColor: theme.primary } : {})
           }}
         >
           {slide.subtitle}
@@ -260,6 +285,7 @@ const SlideCanvas: React.FC<Props> = ({ slide, theme, logo, customCss, id, forEx
         >
           dtajer.com 
         </div>
+      </div>
       </div>
     </div>
   );

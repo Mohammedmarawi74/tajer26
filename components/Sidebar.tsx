@@ -11,9 +11,13 @@ import {
   Layers,
   Image,
   Sparkles,
-  Check
+  Check,
+  Smartphone,
+  Square,
+  Maximize,
+  Box
 } from 'lucide-react';
-import { AppState, SlideType, Slide, PREDEFINED_LOGOS } from '../types';
+import { AppState, SlideType, Slide, PREDEFINED_LOGOS, AspectRatioType, FrameType } from '../types';
 import { THEMES } from '../constants';
 
 interface Props {
@@ -212,7 +216,76 @@ const Sidebar: React.FC<Props> = ({ state, setState }) => {
         )}
 
         {activeTab === 'styles' && (
-          <div className="sidebar__section">
+          <div className="sidebar__content-inner">
+            <div className="sidebar__section">
+              <label className="sidebar__label">
+                <Layout size={16} />
+                حجم السوشل ميديا
+              </label>
+              <div className="sidebar__grid sidebar__grid--3">
+                 <button
+                  onClick={() => setState(prev => ({ ...prev, aspectRatio: AspectRatioType.SQUARE }))}
+                  className={`sidebar__type-btn ${state.aspectRatio === AspectRatioType.SQUARE ? 'sidebar__type-btn--active' : ''}`}
+                  title="Square 1:1"
+                >
+                  <Square size={14} style={{ marginLeft: '6px' }} />
+                  مربع
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, aspectRatio: AspectRatioType.PORTRAIT }))}
+                  className={`sidebar__type-btn ${state.aspectRatio === AspectRatioType.PORTRAIT ? 'sidebar__type-btn--active' : ''}`}
+                  title="Portrait 4:5"
+                >
+                  <Image size={14} style={{ marginLeft: '6px' }} />
+                  بورتريه
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, aspectRatio: AspectRatioType.STORY }))}
+                  className={`sidebar__type-btn ${state.aspectRatio === AspectRatioType.STORY ? 'sidebar__type-btn--active' : ''}`}
+                  title="Story 9:16"
+                >
+                  <Smartphone size={14} style={{ marginLeft: '6px' }} />
+                  ستوري
+                </button>
+              </div>
+            </div>
+
+            <div className="sidebar__section">
+              <label className="sidebar__label">
+                <Sparkles size={16} />
+                نمط الإطار
+              </label>
+              <div className="sidebar__grid">
+                 <button
+                  onClick={() => setState(prev => ({ ...prev, frameType: FrameType.NONE }))}
+                  className={`sidebar__type-btn ${state.frameType === FrameType.NONE ? 'sidebar__type-btn--active' : ''}`}
+                >
+                  بدون
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, frameType: FrameType.MINIMAL }))}
+                  className={`sidebar__type-btn ${state.frameType === FrameType.MINIMAL ? 'sidebar__type-btn--active' : ''}`}
+                >
+                  <Maximize size={14} style={{ marginLeft: '6px' }} />
+                  بسيط
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, frameType: FrameType.THICK }))}
+                  className={`sidebar__type-btn ${state.frameType === FrameType.THICK ? 'sidebar__type-btn--active' : ''}`}
+                >
+                  <Box size={14} style={{ marginLeft: '6px' }} />
+                  سميك
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, frameType: FrameType.GLASS }))}
+                  className={`sidebar__type-btn ${state.frameType === FrameType.GLASS ? 'sidebar__type-btn--active' : ''}`}
+                >
+                  <Sparkles size={14} style={{ marginLeft: '6px' }} />
+                  زجاجي
+                </button>
+              </div>
+            </div>
+
             <div className="sidebar__section">
               <label className="sidebar__label">
                 <Palette size={16} style={{ marginLeft: '8px' }} />

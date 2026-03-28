@@ -42,12 +42,27 @@ export interface LogoOption {
   src: string;
 }
 
+export enum AspectRatioType {
+  SQUARE = 'SQUARE',
+  PORTRAIT = 'PORTRAIT',
+  STORY = 'STORY'
+}
+
+export enum FrameType {
+  NONE = 'NONE',
+  MINIMAL = 'MINIMAL',
+  THICK = 'THICK',
+  GLASS = 'GLASS'
+}
+
 export interface AppState {
   slides: Slide[];
   currentSlideIndex: number;
   theme: AppTheme;
   logo?: string;
   customCss: string;
+  aspectRatio: AspectRatioType;
+  frameType: FrameType;
 }
 
 export const PREDEFINED_LOGOS: LogoOption[] = [

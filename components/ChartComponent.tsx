@@ -23,7 +23,10 @@ interface Props {
 const ChartComponent: React.FC<Props> = ({ data, primaryColor, accentColor, textColor, forExport }) => {
   return (
     <div className="chart-container">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer 
+        width={forExport ? 880 : "100%"} 
+        height={forExport ? 480 : "100%"}
+      >
         <AreaChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 10 }}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
